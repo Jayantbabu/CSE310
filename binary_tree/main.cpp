@@ -1,5 +1,6 @@
 #include <iostream>
 #include <queue>
+#include <stack>
 
 class BinarySearchTree {
 private:
@@ -21,78 +22,80 @@ private:
         return node;
     }
 
-    Node* deleteNode(Node* root, int value) {
-        if (!root) return root;
-        if (value < root->value)
-            root->left = deleteNode(root->left, value);
-        else if (value > root->value)
-            root->right = deleteNode(root->right, value);
-        else {
-            if (!root->left) {
-                Node* temp = root->right;
-                delete root;
+    Node* deleteNode(Node* node, int value) {
+        if (!node) return node;
+
+        if (value < node->value) {
+            node->left = deleteNode(node->left, value);
+        } else if (value > node->value) {
+            node->right = deleteNode(node->right, value);
+        } else {
+            if (!node->left) {
+                Node* temp = node->right;
+                delete node;
                 return temp;
-            } else if (!root->right) {
-                Node* temp = root->left;
-                delete root;
+            } else if (!node->right) {
+                Node* temp = node->left;
+                delete node;
                 return temp;
             }
-            Node* temp = minValueNode(root->right);
-            root->value = temp->value;
-            root->right = deleteNode(root->right, temp->value);
+
+            Node* temp = minValueNode(node->right);
+            node->value = temp->value;
+            node->right = deleteNode(node->right, temp->value);
         }
-        return root;
+        return node;
     }
 
     Node* minValueNode(Node* node) {
         Node* current = node;
-        while (current && current->left != nullptr)
+        while (current && current->left != nullptr) {
             current = current->left;
+        }
         return current;
     }
 
-    bool search(Node* root, int value) {
-        if (!root) return false;
-        if (root->value == value) return true;
-        if (value < root->value)
-            return search(root->left, value);
-        return search(root->right, value);
+    bool search(Node* node, int value) const {
+        if (!node) return false;
+        if (node->value == value) return true;
+        else if (value < node->value) return search(node->left, value);
+        else return search(node->right, value);
     }
 
-    void inorder(Node* root) {
-        if (root) {
-            inorder(root->left);
-            std::cout << root->value << " ";
-            inorder(root->right);
-        }
-    }
-
-    void preorder(Node* root) {
-        if (root) {
-            std::cout << root->value << " ";
-            preorder(root->left);
-            preorder(root->right);
-        }
-    }
-
-    void postorder(Node* root) {
-        if (root) {
-            postorder(root->left);
-            postorder(root->right);
-            std::cout << root->value << " ";
-        }
-    }
-
-    void levelOrder(Node* root) {
-        if (!root) return;
-        std::queue<Node*> q;
-        q.push(root);
-        while (!q.empty()) {
-            Node* node = q.front();
-            q.pop();
+    void inorder(Node* node) {
+        if (node) {
+            inorder(node->left);
             std::cout << node->value << " ";
-            if (node->left != nullptr) q.push(node->left);
-            if (node->right != nullptr) q.push(node->right);
+            inorder(node->right);
+        }
+    }
+
+    void preorder(Node* node) {
+        if (node) {
+            postorder(node->right);
+            postorder(node->left);
+            std::cout << node->value << " ";
+        }
+    }
+
+    void postorder(Node* node) {
+        if (node) {
+            std::cout << node->value << " ";
+            preorder(node->left);
+            preorder(node->right);
+        }
+    }
+
+    void levelOrder(Node* node) {
+        if (!node) return;
+        std::queue<Node*> q;
+        q.push(node);
+        while (!q.empty()) {
+            Node* current = q.front();
+            q.pop();
+            std::cout << current->value << " ";
+            if (current->left != nullptr) q.push(current->left);
+            if (current->right != nullptr) q.push(current->right);
         }
     }
 
@@ -105,7 +108,7 @@ public:
         root = deleteNode(root, value);
     }
 
-    bool search(int value) {
+    bool search(int value) const {
         return search(root, value);
     }
 
