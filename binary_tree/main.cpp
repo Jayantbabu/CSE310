@@ -1,178 +1,158 @@
 #include <iostream>
+#include <string>
 #include <queue>
-#include <stack>
 
-class BinarySearchTree {
-private:
-    struct Node {
-        int value;
-        Node *left, *right;
+using namespace std;
 
-        Node(int val) : value(val), left(nullptr), right(nullptr) {}
-    };
-
-    Node* root = nullptr;
-
-    Node* insert(Node* node, int value) {
-        if (!node) return new Node(value);
-        if (value < node->value)
-            node->left = insert(node->left, value);
-        else if (value > node->value)
-            node->right = insert(node->right, value);
-        return node;
-    }
-
-    Node* deleteNode(Node* node, int value) {
-        if (!node) return node;
-
-        if (value < node->value) {
-            node->left = deleteNode(node->left, value);
-        } else if (value > node->value) {
-            node->right = deleteNode(node->right, value);
-        } else {
-            if (!node->left) {
-                Node* temp = node->right;
-                delete node;
-                return temp;
-            } else if (!node->right) {
-                Node* temp = node->left;
-                delete node;
-                return temp;
-            }
-
-            Node* temp = minValueNode(node->right);
-            node->value = temp->value;
-            node->right = deleteNode(node->right, temp->value);
-        }
-        return node;
-    }
-
-    Node* minValueNode(Node* node) {
-        Node* current = node;
-        while (current && current->left != nullptr) {
-            current = current->left;
-        }
-        return current;
-    }
-
-    bool search(Node* node, int value) const {
-        if (!node) return false;
-        if (node->value == value) return true;
-        else if (value < node->value) return search(node->left, value);
-        else return search(node->right, value);
-    }
-
-    void inorder(Node* node) {
-        if (node) {
-            inorder(node->left);
-            std::cout << node->value << " ";
-            inorder(node->right);
-        }
-    }
-
-    void preorder(Node* node) {
-        if (node) {
-            postorder(node->right);
-            postorder(node->left);
-            std::cout << node->value << " ";
-        }
-    }
-
-    void postorder(Node* node) {
-        if (node) {
-            std::cout << node->value << " ";
-            preorder(node->left);
-            preorder(node->right);
-        }
-    }
-
-    void levelOrder(Node* node) {
-        if (!node) return;
-        std::queue<Node*> q;
-        q.push(node);
-        while (!q.empty()) {
-            Node* current = q.front();
-            q.pop();
-            std::cout << current->value << " ";
-            if (current->left != nullptr) q.push(current->left);
-            if (current->right != nullptr) q.push(current->right);
-        }
-    }
-
-public:
-    void insert(int value) {
-        root = insert(root, value);
-    }
-
-    void deleteValue(int value) {
-        root = deleteNode(root, value);
-    }
-
-    bool search(int value) const {
-        return search(root, value);
-    }
-
-    void inorder() {
-        inorder(root);
-        std::cout << std::endl;
-    }
-
-    void preorder() {
-        preorder(root);
-        std::cout << std::endl;
-    }
-
-    void postorder() {
-        postorder(root);
-        std::cout << std::endl;
-    }
-
-    void levelOrder() {
-        levelOrder(root);
-        std::cout << std::endl;
-    }
-
-    ~BinarySearchTree() {
-        clear(root);
-    }
-
-    void clear(Node* node) {
-        if (node) {
-            clear(node->left);
-            clear(node->right);
-            delete node;
-        }
-    }
+struct Node {
+    int val;
+    Node *left, *right;
 };
 
-int main() {
-    BinarySearchTree bst;
-    int queries;
-    std::cin >> queries;
-    std::string command;
-    int value;
+Node *create(int val) {
+    Node *temp = new Node;
+    temp->val = val;
+    temp->left = temp->right = NULL;
+    return temp;
+}
 
-    for (int i = 0; i < queries; ++i) {
-        std::cin >> command;
+Node *insert(Node *root, int val) {
+    if (root == NULL) {
+        return create(val);
+    }
+    if (val < root->val) {
+        root->left = insert(root->left, val);
+    } else {
+        root->right = insert(root->right, val);
+    }
+    return root;
+}
+
+Node *search(Node *root, int val) {
+    if (root == NULL || root->val == val) {
+        return root;
+    }
+    if (val < root->val) {
+        return search(root->left, val);
+    } else {
+        return search(root->right, val);
+    }
+}
+
+Node *minValueNode(Node *node) {
+    Node *current = node;
+    while (current && current->left != NULL) {
+        current = current->left;
+    }
+    return current;
+}
+
+Node *deleteNode(Node *root, int val) {
+    if (root == NULL) return root;
+
+    if (val < root->val) {
+        root->left = deleteNode(root->left, val);
+    } else if (val > root->val) {
+        root->right = deleteNode(root->right, val);
+    } else {
+        if (root->left == NULL) {
+            Node *temp = root->right;
+            delete root;
+            return temp;
+        } else if (root->right == NULL) {
+            Node *temp = root->left;
+            delete root;
+            return temp;
+        }
+
+        Node *temp = minValueNode(root->right);
+        root->val = temp->val;
+        root->right = deleteNode(root->right, temp->val);
+    }
+    return root;
+}
+
+void inorder(Node *root) {
+    if (root == NULL)
+        return;
+    inorder(root->left);
+    cout << root->val << " ";
+    inorder(root->right);
+}
+
+void preorder(Node *root) {
+    if (root == NULL)
+        return;
+    cout << root->val << " ";
+    preorder(root->left);
+    preorder(root->right);
+}
+
+void postorder(Node *root) {
+    if (root == NULL)
+        return;
+    postorder(root->left);
+    postorder(root->right);
+    cout << root->val << " ";
+}
+
+int height(Node *node) {
+    if (node == NULL) {
+        return 0;
+    } else {
+        int leftHeight = height(node->left);
+        int rightHeight = height(node->right);
+        return (leftHeight > rightHeight) ? leftHeight + 1 : rightHeight + 1;
+    }
+}
+
+void printLevel(Node *root, int level) {
+    if (root == NULL) return;
+    if (level == 0) {
+        cout << root->val << " ";
+    } else {
+        printLevel(root->left, level - 1);
+        printLevel(root->right, level - 1);
+    }
+}
+
+void levelorder(Node *root) {
+    int h = height(root);
+    for (int i = 0; i < h; i++) {
+        printLevel(root, i);
+    }
+}
+
+int main() {
+    Node* root = NULL;
+    int number_of_queries, value;
+    string command;
+    cin >> number_of_queries;
+
+    for (int i = 0; i < number_of_queries; ++i) {
+        cin >> command;
         if (command == "INSERT") {
-            std::cin >> value;
-            bst.insert(value);
+            cin >> value;
+            root = insert(root, value);
         } else if (command == "DELETE") {
-            std::cin >> value;
-            bst.deleteValue(value);
+            cin >> value;
+            root = deleteNode(root, value);
         } else if (command == "SEARCH") {
-            std::cin >> value;
-            std::cout << (bst.search(value) ? "True" : "False") << std::endl;
+            cin >> value;
+            Node* result = search(root, value);
+            cout << (result != NULL ? "True" : "False") << endl;
         } else if (command == "INORDER") {
-            bst.inorder();
+            inorder(root);
+            cout << endl;
         } else if (command == "PREORDER") {
-            bst.preorder();
+            preorder(root);
+            cout << endl;
         } else if (command == "POSTORDER") {
-            bst.postorder();
+            postorder(root);
+            cout << endl;
         } else if (command == "LEVELORDER") {
-            bst.levelOrder();
-        } else {
-            std::cout << "Unknown command" << std::endl;
+            levelorder(root);
+            cout << endl;
         }
     }
 
