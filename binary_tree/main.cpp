@@ -47,26 +47,29 @@ Node *minValueNode(Node *node) {
     return current;
 }
 
-Node *deleteNode(Node *root, int val) {
+Node* deleteNode(Node* root, int key) {
     if (root == NULL) return root;
 
-    if (val < root->val) {
-        root->left = deleteNode(root->left, val);
-    } else if (val > root->val) {
-        root->right = deleteNode(root->right, val);
-    } else {
+    if (key < root->val) {
+        root->left = deleteNode(root->left, key);
+    }
+    else if (key > root->val) {
+        root->right = deleteNode(root->right, key);
+    }
+    else {
         if (root->left == NULL) {
-            Node *temp = root->right;
+            Node* temp = root->right;
             delete root;
             return temp;
         } else if (root->right == NULL) {
-            Node *temp = root->left;
+            Node* temp = root->left;
             delete root;
             return temp;
         }
+        Node* temp = minValueNode(root->right);
 
-        Node *temp = minValueNode(root->right);
         root->val = temp->val;
+
         root->right = deleteNode(root->right, temp->val);
     }
     return root;
