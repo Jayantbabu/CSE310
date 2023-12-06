@@ -3,21 +3,21 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
+#include <string>
 #include <vector>
-#include <list>
 
-struct Node {
-    int dest;
-    double weight;
+// Structure to represent an edge
+struct Edge {
+    int id;
+    int u;
+    int v;
+    float weight;
 };
 
-class Graph {
-public:
-    std::vector<std::list<Node>> adjList;
-    
-    Graph(int vertices);
-    void addEdge(int src, int dest, double weight);
-    void printGraph();
-};
+// Function to read graph from file
+void readGraphFromFile(const std::string& filename, const std::string& direction, std::vector<std::vector<Edge>>& adjacencyLists);
 
-#endif
+// Function to print the graph
+void printGraph(std::vector<std::vector<Edge>>& adjList);
+
+#endif // GRAPH_H

@@ -1,13 +1,11 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-
-struct Edge {
-    int id;
-    int u;
-    int v;
-    float weight;
-};
+#include <queue>
+#include <limits>
+#include "graph.h"
+#include "dijkstra.h"
+#include "cmd_command.h"
 
 void readGraphFromFile(const std::string& filename, const std::string& direction, std::vector<std::vector<Edge>>& adjacencyLists) {
     std::ifstream file(filename);
@@ -57,7 +55,11 @@ int main(int argc, char* argv[]) {
     std::vector<std::vector<Edge>> adjacencyLists;
 
     readGraphFromFile(filename, direction, adjacencyLists);
-    printGraph(adjacencyLists);
+    
+    // int sourceVertex = 0;
+    // dijkstra(adjacencyLists, sourceVertex);
+
+    processCommands(adjacencyLists);
 
 
     return 0;
