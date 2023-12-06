@@ -2,6 +2,7 @@
 #include <vector>
 #include <limits>
 #include <iostream>
+#include "graph.h"
 
 const double INF = std::numeric_limits<double>::infinity();
 
