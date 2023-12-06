@@ -1,43 +1,45 @@
-#include <set>
+#include "graph.h"
 #include <vector>
+#include <queue>
 #include <limits>
 #include <iostream>
-#include "graph.h"
 
-const double INF = std::numeric_limits<double>::infinity();
+const float INF = std::numeric_limits<float>::infinity();
 
+std::vector<float> distances;
+std::vector<int> predecessors; 
 
-void dijkstra(const Graph& graph, int source) {
-    std::vector<double> distances(graph.adjList.size(), INF);
-    std::vector<int> previous(graph.adjList.size(), -1);
-    std::set<std::pair<double, int>> heap;
+void dijkstra(const std::vector<std::vector<Edge>>& graph, int source) {
 
-    distances[source] = 0;
-    heap.insert({0, source});
+    std::fill(distances.begin(), distances.end(), INF);
+    std::fill(predecessors.begin(), predecessors.end(), -1);
+    int n = graph.size();
+    std::vector<float> dist(n, INF);
+    std::vector<int> prev(n, -1);
+    auto comp = [&dist](const int lhs, const int rhs) { return dist[lhs] > dist[rhs]; };
+    std::priority_queue<int, std::vector<int>, decltype(comp)> pq(comp);
 
-    while (!heap.empty()) {
-        int u = heap.begin()->second;
-        heap.erase(heap.begin());
+    dist[source] = 0.0f;
+    pq.push(source);
 
-        for (const Node& node : graph.adjList[u]) {
-            int v = node.dest;
-            double weight = node.weight;
+    while (!pq.empty()) {
+        int u = pq.top();
+        pq.pop();
 
-            // Check if there is a shorter path to v through u
-            if (distances[v] > distances[u] + weight) {
-                // Removing the old distance if it's in the set
-                if (distances[v] != INF) {
-                    heap.erase(heap.find({distances[v], v}));
-                }
-                distances[v] = distances[u] + weight;
-                previous[v] = u;
-                heap.insert({distances[v], v});
+        for (const auto& edge : graph[u]) {
+            int v = edge.v;
+            float weight = edge.weight;
+
+            if (dist[u] + weight < dist[v]) {
+                dist[v] = dist[u] + weight;
+                prev[v] = u;
+                pq.push(v);
             }
         }
     }
 
-    // Output distances and paths
-    for (int i = 0; i < distances.size(); ++i) {
-        std::cout << "Distance from " << source << " to " << i << " is " << distances[i] << std::endl;
+    // Print shortest distances
+    for (int i = 0; i < n; ++i) {
+        std::cout << "Shortest distance from vertex " << source << " to vertex " << i << " is " << dist[i] << std::endl;
     }
 }
