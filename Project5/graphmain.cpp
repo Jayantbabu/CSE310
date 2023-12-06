@@ -33,6 +33,46 @@ void readGraphFromFile(const std::string& filename, const std::string& direction
     file.close();
 }
 
+float calculateDensity(const std::vector<std::vector<Edge>>& adjacencyLists, bool directed) {
+    int V = adjacencyLists.size();
+    int E = 0;
+    for (const auto& edges : adjacencyLists) {
+        E += edges.size();
+    }
+    if (!directed) {
+        E /= 2;  // Because each edge is counted twice for undirected graphs
+    }
+
+    float density = directed ? static_cast<float>(E) / (V * (V - 1)) :
+                               static_cast<float>(2 * E) / (V * (V - 1));
+    return density;
+}
+
+void dfs(const std::vector<std::vector<Edge>>& graph, int vertex, std::vector<bool>& visited) {
+    visited[vertex] = true;
+    for (const auto& edge : graph[vertex]) {
+        if (!visited[edge.v]) {
+            dfs(graph, edge.v, visited);
+        }
+    }
+}
+
+int countTreesInForest(const std::vector<std::vector<Edge>>& graph) {
+    int V = graph.size();
+    std::vector<bool> visited(V, false);
+    int treeCount = 0;
+
+    for (int i = 0; i < V; ++i) {
+        if (!visited[i]) {
+            dfs(graph, i, visited);
+            ++treeCount;
+        }
+    }
+
+    return treeCount;
+}
+
+
 void printGraph(std::vector<std::vector<Edge>>& adjList) {
         for (int i = 0; i < adjList.size(); ++i) {
             std::cout << "Vertex " << i << " has edges to: ";
@@ -59,7 +99,16 @@ int main(int argc, char* argv[]) {
     // int sourceVertex = 0;
     // dijkstra(adjacencyLists, sourceVertex);
 
-    processCommands(adjacencyLists);
+    
+    
+
+    float density = calculateDensity(adjacencyLists,true);
+    int trees = countTreesInForest(adjacencyLists);
+
+    std::cout << "Graph Density: " << density << std::endl;
+    std::cout << "Number of Trees (Connected Components) from DFS: " << trees << std::endl;
+
+    //processCommands(adjacencyLists);
 
 
     return 0;
