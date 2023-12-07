@@ -105,10 +105,10 @@ int main(int argc, char* argv[]) {
     float density = calculateDensity(adjacencyLists,true);
     int trees = countTreesInForest(adjacencyLists);
 
-    std::cout << "Graph Density: " << density << std::endl;
-    std::cout << "Number of Trees (Connected Components) from DFS: " << trees << std::endl;
+    // std::cout << "Graph Density: " << density << std::endl;
+    // std::cout << "Number of Trees (Connected Components) from DFS: " << trees << std::endl;
 
-    //processCommands(adjacencyLists);
+    processCommands(adjacencyLists);
 
 
     return 0;
