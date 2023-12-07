@@ -4,8 +4,8 @@
 #include <queue>
 #include <limits>
 #include "graph.h"
-#include "dijkstra.h"
-#include "cmd_command.h"
+#include "minheap.h"
+#include "main.h"
 
 void readGraphFromFile(const std::string& filename, const std::string& direction, std::vector<std::vector<Edge>>& adjacencyLists) {
     std::ifstream file(filename);
