@@ -1,5 +1,5 @@
 #include "graph.h"
-#include "dijkstra.h"
+#include "minheap.h"
 #include <vector>
 #include <queue>
 #include <limits>
